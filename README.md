@@ -1,4 +1,4 @@
-# portfolio_hub — 개발자 포트폴리오 사이트
+# muhwa_portfolio — 개발자 포트폴리오 사이트
 
 ![Next.js](https://img.shields.io/badge/Next.js_16-000000?logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React_19-61DAFB?logo=react&logoColor=black)
@@ -9,7 +9,7 @@
 > AI 에이전트를 실제 개발 공정에 붙여 만든 개인 프로젝트들을 소개하는 포트폴리오 사이트.
 > 채용담당자가 짧은 방문에서 **"무엇을 만들었고 지금 어떤 상태인가"** 를 확인하도록 만들었다.
 
-**🔗 [portfoliohub-sable.vercel.app](https://portfoliohub-sable.vercel.app)**
+**🔗 [muhwa-portfolio.vercel.app](https://muhwa-portfolio.vercel.app)**
 
 ---
 

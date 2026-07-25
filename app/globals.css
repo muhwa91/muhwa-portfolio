@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ══════════════════════════════════════════════════════════════
-   portfolio_hub — 컨셉 C "Control Plane"
+   muhwa_portfolio — 컨셉 C "Control Plane"
    정본 = DESIGN.md. 여기 값이 문서와 다르면 문서가 정답이다.
    원시 hex 는 @theme 에만. 컴포넌트는 시맨틱 토큰만 참조한다
    — 라이트 인터럽트(.section-light)가 같은 컴포넌트를 재사용하는 근거.
