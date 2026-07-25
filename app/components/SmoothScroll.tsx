@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
-import { setLenis } from "@/lib/lenis";
 
 // Lenis 스무스 스크롤(DESIGN §5.1).
 // 자체 rAF 대신 gsap.ticker 하나로 Lenis 를 구동한다 — 페이지에 rAF 루프를 둘로 만들지 않기 위해서.
@@ -17,7 +16,6 @@ export function SmoothScroll() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const lenis = new Lenis();
-    setLenis(lenis);
 
     const update = (time: number) => lenis.raf(time * 1000); // gsap.ticker 초 → Lenis ms
     gsap.ticker.add(update);
@@ -27,7 +25,6 @@ export function SmoothScroll() {
       gsap.ticker.remove(update);
       gsap.ticker.lagSmoothing(500, 33);
       lenis.destroy();
-      setLenis(null);
     };
   }, []);
 
