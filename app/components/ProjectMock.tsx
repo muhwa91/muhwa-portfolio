@@ -162,11 +162,12 @@ function PdfEditor() {
   );
 }
 
+// 키에 하이픈이 들어가므로 전부 따옴표로 감싼다(식별자로는 쓸 수 없다)
 const MOCKS: Record<string, () => React.ReactElement> = {
   "ai-agent-workspace": AgentBoard,
-  trading_info: TradingBoard,
-  etf_info: NavChart,
-  pdf_restyler: PdfEditor,
+  "trading-info": TradingBoard,
+  "etf-info": NavChart,
+  "pdf-restyler": PdfEditor,
 };
 
 export function ProjectMock({ slug }: { slug: string }) {

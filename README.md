@@ -1,4 +1,4 @@
-# muhwa_portfolio — 개발자 포트폴리오 사이트
+# muhwa-portfolio — 개발자 포트폴리오 사이트
 
 ![Next.js](https://img.shields.io/badge/Next.js_16-000000?logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React_19-61DAFB?logo=react&logoColor=black)
