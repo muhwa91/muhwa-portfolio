@@ -1,0 +1,940 @@
+@import "tailwindcss";
+
+/* ══════════════════════════════════════════════════════════════
+   portfolio_hub — 컨셉 C "Control Plane"
+   정본 = DESIGN.md. 여기 값이 문서와 다르면 문서가 정답이다.
+   원시 hex 는 @theme 에만. 컴포넌트는 시맨틱 토큰만 참조한다
+   — 라이트 인터럽트(.section-light)가 같은 컴포넌트를 재사용하는 근거.
+   ══════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* ── 다크 중립 (원시) — DESIGN §3.1 ── */
+  --color-n-950: #08090a;
+  --color-n-900: #0f1113;
+  --color-n-850: #16191c;
+  --color-n-800: #1e2225;
+  --color-n-100: #f2f3f5;
+  --color-n-300: #a1a7ae;
+  --color-n-500: #7a828b;
+
+  /* ── 라이트 인터럽트 (원시) ── */
+  --color-l-bg: #f2f5e8;
+  --color-l-surface: #fafbf4;
+  --color-l-text: #14161a;
+  --color-l-muted: #585f52;
+
+  /* ── 악센트 (단일 — 서명색) ── */
+  --color-lime: #d6f24a;
+  --color-on-lime: #08090a;
+
+  /* ── 상태 ── */
+  --color-ok: #4ade80;
+  --color-wip: #fbbf24;
+  --color-idle: #7a828b;
+
+  /* ── 폰트 (next/font 변수 경유) — 한글·라틴 단일(Pretendard) ── */
+  --font-sans: var(--font-pretendard), ui-sans-serif, system-ui, sans-serif;
+  /* 한글 폴백을 Pretendard 로 못 박는다 — JetBrains Mono 에 한글 글리프가 없어
+     이걸 안 두면 시스템 고정폭 한글로 떨어져 "주 력" 처럼 벌어진다(실측). */
+  --font-mono: var(--font-jetbrains), var(--font-pretendard), ui-monospace,
+    "SFMono-Regular", monospace;
+
+  /* ── 라운드 ── */
+  --radius-card: 12px;
+  --radius-media: 8px;
+  --radius-chip: 6px;
+
+  /* ── 모션 ── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ── 시맨틱 (2층) — 다크 기본 ── */
+:root {
+  --bg: var(--color-n-950);
+  --surface: var(--color-n-900);
+  --surface-raised: var(--color-n-850);
+  --surface-block: var(--color-n-800);
+  --border: rgb(255 255 255 / 0.09);
+  --border-strong: rgb(255 255 255 / 0.16);
+  --text-primary: var(--color-n-100);
+  --text-secondary: var(--color-n-300);
+  --text-muted: var(--color-n-500);
+  --accent: var(--color-lime);
+  --accent-fg: var(--color-on-lime);
+  --ring: var(--color-lime);
+
+  /* 간격·컴포넌트 (3층) */
+  --pad-section: 80px;
+  --pad-page: clamp(20px, 5vw, 40px);
+  --pad-card: 24px;
+  --maxw: 1200px;
+  --maxw-text: 68ch;
+  --nav-h: 64px;
+  --btn-h: 44px;
+  --media-ar: 16 / 10;
+  --card-gap: 24px;
+  --mark-pad: 0.08em 0.24em;
+  --mark-skew: -1.2deg;
+  /* ABOUT 이 마지막 섹션이라 하단 여백을 조금 더 준다(잘린 느낌 방지) */
+  --pad-section-last: 96px;
+  /* 다이어그램은 "옆에 놓는 그림"이 아니라 텍스트 뒤에 까는 텍스처다.
+     0.5 대에선 mono 라벨이 헤드라인 글자와 충돌해 읽기 어렵다(1280px 실측). */
+  --diagram-op: 0.32;
+
+  --dur-fast: 160ms;
+  --dur-std: 280ms;
+  --dur-slow: 640ms;
+}
+
+/* ── 라이트 인터럽트 — 시맨틱 재할당(§5.5 전용). 컴포넌트 무수정 ── */
+.section-light {
+  --bg: var(--color-l-bg);
+  --surface: var(--color-l-surface);
+  --surface-raised: var(--color-l-surface);
+  --surface-block: rgb(20 22 26 / 0.06);
+  --border: rgb(20 22 26 / 0.12);
+  --border-strong: rgb(20 22 26 / 0.22);
+  --text-primary: var(--color-l-text);
+  --text-secondary: #3a4038;
+  --text-muted: var(--color-l-muted);
+  /* 라임은 라이트에서 텍스트로 못 쓴다(1.2:1) → 마킹 배경으로만 유효.
+     인터랙션 색·포커스 링은 잉크. DESIGN §7 */
+  --ring: var(--color-l-text);
+  background: var(--bg);
+  color: var(--text-primary);
+  color-scheme: light; /* 이 구간 안의 네이티브 컨트롤은 라이트로 */
+}
+
+@media (max-width: 767px) {
+  :root {
+    --pad-section: 52px;
+    --pad-section-last: 64px;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --pad-section: 64px;
+    --pad-section-last: 80px;
+  }
+}
+
+/* ══════════════ 기본 ══════════════ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* 스크롤바·네이티브 컨트롤을 다크로. 없으면 흰 스크롤바가 붙는다 */
+  color-scheme: dark;
+}
+/* Lenis 가 붙으면 네이티브 smooth 와 충돌 → Lenis 쪽이 html.lenis 를 세운다 */
+html.lenis {
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* 한글은 어절 중간에서 끊으면 안 된다 — keep-all 없이는 "치게 만/드는" 처럼 쪼개진다 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  text-wrap: balance;
+}
+p {
+  margin: 0;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+ul,
+ol,
+dl,
+dd {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* 인터랙티브 공통 — 더블탭 줌 지연 제거 + 안드로이드 회색 하이라이트 억제.
+   포커스·hover 로 이미 피드백을 주므로 기본 하이라이트는 끈다. */
+a,
+button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* outline 을 끄지만 아래 box-shadow 링으로 대체한다(대체 없는 outline:none 금지) */
+:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 4px var(--ring);
+  border-radius: var(--radius-chip);
+}
+
+/* 시각적 숨김(스크린리더 전용) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--pad-page);
+  top: 8px;
+  z-index: 100;
+  transform: translateY(-200%);
+  padding: 10px 16px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-radius: var(--radius-chip);
+  font: 400 12px / 1 var(--font-mono);
+  letter-spacing: 0.1em;
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* ══════════════ 레이아웃 프리미티브 ══════════════ */
+
+.section {
+  padding-block: var(--pad-section);
+  padding-inline: var(--pad-page);
+  /* nav 가 fixed 라 앵커 점프 시 섹션 상단이 그 밑으로 들어간다.
+     데스크톱은 섹션 여백(80px)이 nav(64px)보다 커서 가려지지 않지만 모바일(52px)에선 가린다. */
+  scroll-margin-top: var(--nav-h);
+}
+.section__inner {
+  max-width: var(--maxw);
+  margin-inline: auto;
+}
+/* 마지막 섹션(ABOUT) — 푸터가 없어 뒤에 스크롤 여지가 없다.
+   한 화면 높이를 확보해야 nav 의 ABOUT 앵커가 실제로 상단에 도달한다
+   (섹션 높이 < 뷰포트면 문서 끝에 막혀 클릭해도 안 움직인다 — 실측 708px 부족).
+   남는 높이는 내용을 세로 중앙에 두어 위아래로 나눈다(꼬리처럼 비지 않게). */
+main > .section:last-child {
+  min-height: calc(100svh - var(--nav-h));
+  display: flex;
+  align-items: center;
+  padding-bottom: var(--pad-section-last);
+}
+main > .section:last-child > .section__inner {
+  width: 100%;
+}
+
+/* 아이브로우 — `● WORK` (§4) */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 400 12px / 1.2 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.eyebrow::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.section__headline {
+  margin-top: 12px;
+  font-size: clamp(26px, 4vw, 44px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  /* 한글 폭 기준 — ch(라틴 0 기준)은 한글에서 절반만 세어 과도하게 좁아진다 */
+  max-width: 18em;
+}
+
+.section__lede {
+  margin-top: 12px;
+  color: var(--text-secondary);
+  max-width: var(--maxw-text);
+}
+
+/* 스크롤 리빌(§6.4) — 숨김은 Reveal 이 data-reveal-root 를 켤 때만 걸린다.
+   JS 실패·reduced-motion 이면 속성이 없어 콘텐츠는 그냥 보인다. */
+[data-reveal-root] [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.48s var(--ease-out),
+    transform 0.48s var(--ease-out);
+}
+[data-reveal-root] [data-reveal][data-shown="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ══════════════ 서명 — 형광펜 마킹 (§5.3) ══════════════ */
+
+.mark {
+  display: inline-block;
+  padding: var(--mark-pad);
+  border-radius: 2px;
+  background: var(--color-lime);
+  color: var(--color-on-lime);
+  transform: skew(var(--mark-skew));
+}
+/* 좌→우로 그어지는 진입(§6.2). JS 가 data-drawn 을 켠다 */
+.mark[data-draw] {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+  color: inherit;
+}
+.mark[data-draw]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 2px;
+  background: var(--color-lime);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 420ms var(--ease-out);
+}
+.mark[data-draw][data-drawn="true"] {
+  color: var(--color-on-lime);
+  transition: color 120ms linear 180ms;
+}
+.mark[data-draw][data-drawn="true"]::before {
+  transform: scaleX(1);
+}
+
+/* ══════════════ 버튼 (§5.10) ══════════════ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--btn-h);
+  padding-inline: 20px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-chip);
+  font: 500 14px / 1 var(--font-sans);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-inout),
+    border-color var(--dur-fast) var(--ease-inout),
+    transform var(--dur-fast) var(--ease-inout);
+}
+.btn--primary {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+.btn--primary:hover {
+  background: color-mix(in oklab, var(--accent) 92%, black);
+}
+.btn--secondary {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+.btn--secondary:hover {
+  background: var(--surface-raised);
+}
+.btn--ghost {
+  padding-inline: 0;
+  color: var(--text-secondary);
+}
+.btn--ghost:hover {
+  color: var(--text-primary);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* ══════════════ nav (§5.9) ══════════════ */
+
+.nav {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: var(--pad-page);
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color var(--dur-std) var(--ease-inout),
+    border-color var(--dur-std) var(--ease-inout);
+}
+.nav[data-scrolled="true"] {
+  /* 라이트 인터럽트(§5.5) 위를 지날 때도 nav 는 다크로 유지된다 —
+     반투명이 옅으면 밝은 배경이 비쳐 탁해지므로 88% 로 고정 */
+  background: color-mix(in oklab, var(--color-n-950) 88%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom-color: var(--border);
+}
+/* 브랜드 = mono 소문자 핸들. nav 메뉴(mono 대문자)와 급을 나누려고 크기·굵기로만 구분한다 */
+.nav__brand {
+  font: 500 15px / 1 var(--font-mono);
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+.nav__links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font: 400 12px / 1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease-inout);
+}
+.nav__link:hover {
+  color: var(--text-primary);
+}
+/* 현재 섹션 = 라임 점(밑줄 아님 — 마킹과 언어 통일) */
+.nav__link[aria-current="true"] {
+  color: var(--text-primary);
+}
+.nav__link[aria-current="true"]::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.nav__toggle {
+  display: none;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--text-primary);
+  font: 400 12px / 1 var(--font-mono);
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+/* 모바일 메뉴 = 네이티브 <dialog> — Esc·포커스 트랩·복귀를 브라우저가 처리한다 */
+.nav__sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 49;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  padding: var(--pad-page);
+  border: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  overscroll-behavior: contain; /* 시트 끝에서 뒤 페이지가 딸려 스크롤되지 않게 */
+}
+.nav__sheet[open] {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+.nav__sheet::backdrop {
+  background: var(--bg);
+}
+.nav__sheet .nav__toggle {
+  position: absolute;
+  top: 20px;
+  right: var(--pad-page);
+  display: inline-flex;
+  color: var(--text-muted);
+}
+.nav__sheet a {
+  padding-block: 12px;
+  border-bottom: 1px solid var(--border);
+  font: 400 clamp(24px, 8vw, 40px) / 1.2 var(--font-mono);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 767px) {
+  .nav__links {
+    display: none;
+  }
+  .nav__toggle {
+    display: inline-flex;
+  }
+}
+
+/* ══════════════ 히어로 (§5.2) ══════════════ */
+
+.hero {
+  position: relative;
+  /* 88svh 는 큰 모니터에서 CTA 아래로 빈 화면이 한참 남았다(실측) — 콘텐츠 높이에 가깝게.
+     px 상한이 있어야 세로가 긴 모니터에서 빈 띠가 생기지 않는다. */
+  min-height: min(68svh, 640px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: calc(var(--nav-h) + 24px);
+  padding-bottom: 64px;
+  padding-inline: var(--pad-page);
+  overflow: hidden;
+}
+.hero__inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+}
+/* 라인 마스크 리빌 래퍼(§6.1).
+   padding+음수 margin 으로 클립 경계만 바깥으로 밀어 형광펜 마킹이 잘리지 않게 한다
+   (레이아웃은 그대로). y:110% 이동폭이 이 여유보다 커서 숨김은 여전히 유효. */
+.line {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.16em;
+  margin-block: -0.16em;
+}
+
+.hero__headline {
+  margin-top: 14px;
+  font-size: clamp(38px, 6.4vw, 80px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  /* 2줄로 떨어지게 — 한글 1자 ≈ 1em 이라 15em 이 "코드를 치는 팀을 설계합니다." 한 줄 폭 */
+  max-width: 15em;
+}
+.hero__sub {
+  margin-top: 18px;
+  max-width: 56ch;
+  color: var(--text-secondary);
+  font-size: clamp(16px, 1.4vw, 18px);
+}
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+/* 스크롤 큐는 흐름에서 분리 — flow 에 두면 상단이 비고 하단에 몰린다(이전 구현 함정) */
+.hero__cue {
+  position: absolute;
+  left: var(--pad-page);
+  bottom: 24px;
+  font: 400 11px / 1 var(--font-mono);
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+
+/* 다이어그램 — 배경 선화 */
+.hero__diagram {
+  position: absolute;
+  z-index: 0;
+  top: 6%;
+  right: 0;
+  width: min(62%, 780px);
+  opacity: var(--diagram-op);
+  pointer-events: none;
+}
+@media (max-width: 1023px) {
+  .hero__diagram {
+    top: auto;
+    right: -10%;
+    bottom: 6%;
+    width: 84%;
+    opacity: 0.26;
+  }
+}
+/* 모바일은 히어로에 여유 폭·높이가 없어 다이어그램이 서브텍스트·CTA 위로 겹친다(실측).
+   흐리게 깔아도 노드 라벨이 글자와 부딪혀 노이즈가 되므로 아예 내린다. */
+@media (max-width: 767px) {
+  .hero__diagram {
+    display: none;
+  }
+}
+
+.diagram__node {
+  fill: var(--surface);
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+.diagram__label {
+  fill: var(--text-muted);
+  font: 400 11px var(--font-mono);
+  letter-spacing: 0.04em;
+}
+.diagram__edge {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+/* 흐름 표시(§6.3) — 점 스프라이트 대신 정규화된 대시(pathLength=100)가 곡선을 따라 흐른다.
+   ponytail: offset-path 대신 stroke-dashoffset — 곡선에서 안전하고 JS 0, 서버 컴포넌트 유지.
+   동시 2개. reduced-motion 은 전역 폴백이 정지시킨다. */
+.diagram__edge--flow {
+  stroke: var(--accent);
+  stroke-dasharray: 6 94;
+  animation: diagram-flow 4.5s linear infinite;
+}
+.diagram__edge--flow-b {
+  animation-delay: -2.2s;
+}
+@keyframes diagram-flow {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ══════════════ 스택 스트립 ══════════════ */
+
+.strip {
+  padding-block: 20px;
+  padding-inline: var(--pad-page);
+  border-block: 1px solid var(--border);
+}
+.strip__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  font: 400 12px / 1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ══════════════ WORK — 프로젝트 카드 (§5.4) ══════════════ */
+
+.work__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+  margin-top: 32px;
+}
+
+.project-card {
+  display: grid;
+  gap: 32px;
+  align-items: center;
+  padding: var(--pad-card);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  transition:
+    border-color var(--dur-fast) var(--ease-inout),
+    transform var(--dur-fast) var(--ease-inout);
+}
+.project-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+@media (min-width: 1024px) {
+  .project-card {
+    grid-template-columns: 1fr 1.15fr;
+    padding: 32px;
+  }
+  /* 좌우 교대 — 짝수 카드는 미디어가 왼쪽 */
+  .project-card:nth-child(even) .project-card__media {
+    order: -1;
+  }
+}
+@media (max-width: 767px) {
+  .project-card {
+    padding: 20px;
+  }
+}
+
+.project-card__index {
+  font: 400 12px / 1 var(--font-mono);
+  letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+.project-card__name {
+  margin-top: 12px;
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.project-card__line {
+  margin-top: 12px;
+  max-width: 52ch;
+  color: var(--text-secondary);
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.6;
+}
+.project-card__meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  align-items: baseline;
+  margin-top: 20px;
+}
+.project-card__meta dt {
+  font: 400 11px / 1.3 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.project-card__meta dd {
+  font: 400 13px / 1.4 var(--font-mono);
+  letter-spacing: 0; /* 한글 혼재 */
+  color: var(--text-secondary);
+}
+.project-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* 상태 배지 — 색 + 점 + 텍스트(§7 색 단독 의존 금지) */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 400 11px / 1 var(--font-mono);
+  /* 값에 한글이 섞인다 — 라벨용 넓은 자간(0.1em)을 그대로 쓰면 글자가 흩어져 보인다 */
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--status-color, var(--color-idle));
+}
+.status[data-status="live"] {
+  --status-color: var(--color-ok);
+}
+.status[data-status="wip"] {
+  --status-color: var(--color-wip);
+}
+
+/* 미디어 프레임 — 실제 스크린샷 전까지 화면 도식(ProjectMock)이 채운다 */
+.project-card__media {
+  position: relative;
+  aspect-ratio: var(--media-ar);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-media);
+  overflow: hidden;
+  transition: transform var(--dur-std) var(--ease-out);
+}
+.project-card:hover .project-card__media {
+  transform: scale(1.01);
+}
+/* 도식의 창 헤더 우측(비어 있는 자리)에 얹어 창 제목처럼 읽히게 한다.
+   좌하단에 두면 도식 하단 요소와 겹친다(모바일에서 실측). 5.5% = viewBox 헤더 중앙선. */
+.project-card__caption {
+  position: absolute;
+  top: 5.5%;
+  right: 14px;
+  transform: translateY(-50%);
+  font: 400 11px / 1 var(--font-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── 화면 도식(ProjectMock) ── */
+.mock {
+  width: 100%;
+  height: 100%;
+}
+.mock__hair {
+  stroke: var(--border);
+  stroke-width: 1;
+  fill: none;
+}
+.mock__line {
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+  fill: none;
+  color: var(--border-strong);
+}
+.mock__panel {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+.mock__block {
+  fill: var(--surface-block);
+}
+.mock__dot {
+  fill: var(--border-strong);
+}
+.mock__accent {
+  color: var(--accent);
+  stroke-width: 1.5;
+}
+.mock__accentFill {
+  fill: var(--accent);
+  opacity: 0.85;
+}
+.mock__accent-dash {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  fill: none;
+}
+.mock__band {
+  fill: var(--accent);
+  opacity: 0.08;
+}
+
+/* ══════════════ HOW — 라이트 인터럽트 (§5.5) ══════════════ */
+
+.how__grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr;
+  margin-top: 32px;
+}
+@media (min-width: 768px) {
+  .how__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+/* 항목 9개 = 3×3 으로 딱 떨어진다. 4열이면 마지막 줄에 1개만 남고 카드도 좁아 읽기 나쁘다. */
+@media (min-width: 1024px) {
+  .how__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.how__item {
+  display: flex;
+  flex-direction: column;
+  padding: var(--pad-card);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.how__icon {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: var(--text-primary);
+  stroke-width: 1.25;
+}
+.how__title {
+  margin-top: 16px;
+  font-size: 17px;
+  line-height: 1.3;
+}
+.how__desc {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+/* 실물 이름 한 줄 — 설명이 추상적으로 읽히지 않게 실제 파일·관문 이름을 붙인다.
+   margin-top:auto 로 카드 높이가 달라도 메타 줄은 항상 바닥에 정렬된다. */
+.how__meta {
+  margin-top: auto;
+  padding-top: 16px;
+  font: 400 11px / 1.5 var(--font-mono);
+  letter-spacing: 0.01em; /* 한글 혼재 */
+  color: var(--text-muted);
+}
+
+/* ══════════════ ABOUT (§5.6) ══════════════ */
+
+.about__grid {
+  display: grid;
+  gap: 48px;
+  grid-template-columns: 1fr;
+  margin-top: 32px;
+}
+@media (min-width: 1024px) {
+  .about__grid {
+    grid-template-columns: 1.2fr 1fr;
+    gap: 64px;
+  }
+}
+.about__body p {
+  max-width: var(--maxw-text);
+  color: var(--text-secondary);
+}
+.about__body p + p {
+  margin-top: 20px;
+}
+.about__facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px 20px;
+  align-items: baseline;
+  padding-top: 4px;
+}
+/* dt/dd 쌍을 div 로 묶되 그리드 셀은 dt·dd 가 직접 차지하게(인라인 style 대신 클래스) */
+.about__facts > div {
+  display: contents;
+}
+.about__facts dt {
+  font: 400 11px / 1.3 var(--font-mono);
+  letter-spacing: 0.02em; /* 한글 라벨(주력·프론트…) — 넓은 자간 금지 */
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.about__facts dd {
+  font: 400 13px / 1.5 var(--font-mono);
+  color: var(--text-secondary);
+}
+
+/* ══════════════ 모션 폴백 (§6·§7) ══════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  /* 마킹은 완성 상태로 고정(정보 손실 없음) */
+  .mark[data-draw] {
+    color: var(--color-on-lime);
+  }
+  .mark[data-draw]::before {
+    transform: scaleX(1);
+  }
+}
