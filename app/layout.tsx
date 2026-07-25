@@ -23,7 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "여중기 — 풀스택 개발자 · AI 시스템 오케스트레이터",
+  title: "My portfolio-hub",
   description:
     "설계하고, 지휘하고, 끝까지 만듭니다. 구조와 계약은 직접 잡고 반복 구현은 AI 에이전트에 나눠 맡겨 만든 네 개의 개인 프로젝트.",
 };
