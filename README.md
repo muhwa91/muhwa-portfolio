@@ -11,6 +11,8 @@
 
 **🔗 [muhwa-portfolio.vercel.app](https://muhwa-portfolio.vercel.app)**
 
+![미리보기](preview.png)
+
 ---
 
 ## 컨셉 — "Control Plane"
