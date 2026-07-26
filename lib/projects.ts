@@ -49,7 +49,10 @@ export const PROJECTS: Project[] = [
     status: "live",
     statusLabel: "라이브 데모",
     links: [
-      { label: "라이브 데모 ↗", href: "https://muhwa-trading-info.vercel.app", variant: "solid" },
+      // muhwa-trading-info.vercel.app 은 특정 배포에 고정된 별칭이라 새 배포를 따라가지 않는다
+      // (2026-07-26 실사고: 수정을 배포했는데 이 링크만 18시간 전 빌드를 계속 서빙).
+      // trading-info-demo.vercel.app 은 프로덕션 자동 추적 주소다 — 이쪽을 쓴다.
+      { label: "라이브 데모 ↗", href: "https://trading-info-demo.vercel.app", variant: "solid" },
       { label: "GitHub ↗", href: "https://github.com/muhwa91/trading-info", variant: "outline" },
     ],
     media: {
