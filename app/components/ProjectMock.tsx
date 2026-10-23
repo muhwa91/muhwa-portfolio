@@ -104,7 +104,7 @@ function TradingBoard() {
   );
 }
 
-/** NAV 추종 시뮬레이터 — 실제선 vs 예측선 + 괴리 밴드 */
+/** 개장 시가 예측 — 실제선 vs 예측선 + 오차 밴드 */
 function NavChart() {
   return (
     <Frame>
@@ -127,7 +127,7 @@ function NavChart() {
   );
 }
 
-/** PDF 텍스트·색상 편집 — 페이지 + 색 스와치 */
+/** 명함 생성 — 미리보기 페이지 + 입력 칸 */
 function PdfEditor() {
   const swatches = [0, 1, 2, 3, 4];
   return (

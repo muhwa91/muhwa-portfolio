@@ -29,7 +29,7 @@ export const PROJECTS: Project[] = [
     slug: "ai-agent-workspace",
     name: "ai-agent-workspace",
     oneLiner:
-      "헌법 하나로 14개 에이전트와 품질 게이트를 통제하는 개발 거버넌스 시스템",
+      "헌법 하나로 15개 에이전트와 품질 게이트를 통제하는 개발 거버넌스 시스템",
     stack: "Claude Code · MCP · 거버넌스",
     status: "structure",
     statusLabel: "공개 레포",
@@ -63,22 +63,22 @@ export const PROJECTS: Project[] = [
   {
     slug: "etf-info",
     name: "etf-info",
-    oneLiner: "TIGER ETF 실시간 NAV·괴리율 시뮬레이터",
+    oneLiner: "TIGER 미국우주테크 ETF 그날 예상 시가를 개장 전 텔레그램으로 알리는 예측 스크립트",
     status: "live",
-    stack: "Python · KIS/Yahoo API",
+    stack: "Python · KIS API · GitHub Actions · Apps Script",
     statusLabel: "매일 자동 실행",
     links: [
       { label: "GitHub ↗", href: "https://github.com/muhwa91/etf-info", variant: "solid" },
     ],
     media: {
-      alt: "etf-info NAV·괴리율 시뮬레이터 화면 플레이스홀더",
-      caption: "ETF NAV SIMULATOR",
+      alt: "etf-info 예측 시가 대 실제 시가 화면 플레이스홀더",
+      caption: "ETF OPEN FORECAST",
     },
   },
   {
     slug: "pdf-restyler",
     name: "pdf-restyler",
-    oneLiner: "PDF의 텍스트·색상을 직접 편집·치환하는 데스크톱 앱",
+    oneLiner: "이름·직급·연락처만 넣으면 표준 명함 PDF를 만드는 데스크톱 앱",
     stack: "Python · PySide6 · PyMuPDF",
     status: "structure",
     statusLabel: "완성 · 배포됨",
@@ -86,8 +86,8 @@ export const PROJECTS: Project[] = [
       { label: "GitHub ↗", href: "https://github.com/muhwa91/pdf-restyler", variant: "solid" },
     ],
     media: {
-      alt: "pdf-restyler PDF 편집 화면 플레이스홀더",
-      caption: "PDF TEXT EDITOR",
+      alt: "pdf-restyler 명함 생성 화면 플레이스홀더",
+      caption: "BUSINESS CARD PDF",
     },
   },
 ];
